@@ -38,19 +38,31 @@ body {
     padding: 2rem 1rem;
 }
 
-/* Stats Cards */
+/* Enhanced Stats Cards with Animations */
 .stats-card {
     border: none;
     border-radius: 15px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     overflow: hidden;
     position: relative;
+    animation: slideInUp 0.8s ease-out;
 }
 
 .stats-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .stats-card::before {
@@ -82,26 +94,61 @@ body {
 
 .stats-icon {
     font-size: 2.5rem;
-    opacity: 0.8;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
 }
 
-/* Dashboard Cards */
+.stats-card:hover .stats-icon {
+    transform: rotate(10deg) scale(1.1);
+    animation: none;
+}
+
+/* Enhanced Dashboard Cards */
 .dashboard-card {
-    border: none;
+    border: 1px solid #e2e8f0;
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     overflow: hidden;
+    background: white;
+    position: relative;
+    animation: fadeInUp 0.6s ease-out;
 }
 
 .dashboard-card:hover {
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    transform: translateY(-3px);
+    border-color: #cbd5e1;
 }
 
 .dashboard-card .card-header {
     border: none;
     font-weight: 600;
-    padding: 1rem 1.5rem;
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-bottom: 1px solid #e2e8f0;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Map Styles */
@@ -155,18 +202,60 @@ body {
 
 /* Alert Styles */
 .alert-item {
-    border-radius: 10px;
+    border-radius: 12px;
     margin-bottom: 0.75rem;
     border-left: 4px solid;
-    padding: 0.75rem 1rem;
+    padding: 1rem;
     background: white;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    animation: slideInRight 0.6s ease-out;
+}
+
+.alert-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: right 0.8s;
 }
 
 .alert-item:hover {
-    transform: translateX(5px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    transform: translateX(8px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.alert-item:hover::before {
+    right: 100%;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.alert-item.severity-critical {
+    animation: criticalPulse 2s infinite, slideInRight 0.6s ease-out;
+}
+
+@keyframes criticalPulse {
+    0%, 100% {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
+    }
 }
 
 .alert-item.severity-low {
@@ -251,20 +340,117 @@ body {
     }
 }
 
-/* TLE FIGHTERS Branding */
+/* Enhanced TLE FIGHTERS Branding */
 .tle-fighters-brand {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 24px;
+    right: 24px;
     background: var(--gradient-ocean);
     color: white;
     padding: 0.75rem 1.25rem;
-    border-radius: 25px;
-    font-size: 0.9rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
     font-weight: 600;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     z-index: 1000;
-    animation: glow 2s ease-in-out infinite alternate;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    animation: glow 3s ease-in-out infinite alternate, float 6s ease-in-out infinite;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tle-fighters-brand:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Location-specific styling for Australian regions */
+.location-badge {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-block;
+    margin-right: 0.5rem;
+    animation: locationFloat 3s ease-in-out infinite;
+}
+
+@keyframes locationFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-2px); }
+}
+
+/* Enhanced Progress Bar Animations for Anomaly Scores */
+.progress {
+    background: rgba(0,0,0,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    height: 20px;
+}
+
+.progress-bar {
+    transition: width 1.5s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: progressShine 2s infinite;
+}
+
+@keyframes progressShine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Enhanced table row hover effects */
+.table tbody tr {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
+    transform: translateX(3px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Status indicator animations */
+.fas.fa-check-circle {
+    animation: successPulse 2s ease-in-out infinite;
+}
+
+.fas.fa-exclamation-triangle {
+    animation: warningBounce 1.5s ease-in-out infinite;
+}
+
+@keyframes successPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes warningBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
 }
 
 @keyframes glow {
@@ -272,13 +458,102 @@ body {
         box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
     to {
-        box-shadow: 0 4px 25px rgba(116, 185, 255, 0.4);
+        box-shadow: 0 8px 30px rgba(37, 99, 235, 0.5);
     }
 }
 
-/* Table Enhancements */
+/* Enhanced Tab Styling */
+.nav-tabs-container {
+    background: white;
+    border-radius: 12px;
+    padding: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
+    animation: slideInDown 0.8s ease-out;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dashboard-tabs .nav-link {
+    border: none;
+    border-radius: 8px;
+    color: #64748b;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    margin-right: 0.5rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-tabs .nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: var(--ocean-blue);
+    transition: width 0.3s ease;
+}
+
+.dashboard-tabs .nav-link:hover {
+    background: #f1f5f9;
+    color: var(--ocean-blue);
+    transform: translateY(-2px);
+}
+
+.dashboard-tabs .nav-link:hover::before {
+    width: 100%;
+}
+
+.dashboard-tabs .nav-link.active {
+    background: var(--gradient-ocean);
+    color: white;
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    transform: translateY(-3px);
+}
+
+.tab-pane {
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Loading Animations */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(37, 99, 235, 0.3);
+    border-radius: 50%;
+    border-top-color: #2563eb;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Enhanced Table Animations and Effects */
 .table-responsive {
-    border-radius: 10px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     overflow: hidden;
 }
 

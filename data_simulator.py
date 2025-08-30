@@ -4,14 +4,62 @@ from datetime import datetime, timedelta
 
 class DataSimulator:
     def __init__(self):
-        # Define sensor locations around a coastal area
+        # Define sensor locations across Australian coastal regions with detailed location info
         self.sensors = {
-            'TG001': {'type': 'tide_gauge', 'lat': -33.8688, 'lon': 151.2093, 'name': 'Sydney Harbour'},
-            'TG002': {'type': 'tide_gauge', 'lat': -33.9249, 'lon': 151.2424, 'name': 'Botany Bay'},
-            'WS001': {'type': 'weather_station', 'lat': -33.8765, 'lon': 151.2052, 'name': 'Circular Quay'},
-            'WS002': {'type': 'weather_station', 'lat': -33.8900, 'lon': 151.2500, 'name': 'Bondi Beach'},
-            'WQ001': {'type': 'water_quality', 'lat': -33.8600, 'lon': 151.2000, 'name': 'Harbour Bridge'},
-            'WQ002': {'type': 'water_quality', 'lat': -33.9100, 'lon': 151.2300, 'name': 'Coogee Beach'},
+            'NSW_TG001': {
+                'type': 'tide_gauge', 
+                'lat': -33.8688, 
+                'lon': 151.2093, 
+                'name': 'Sydney Harbour Bridge Tide Station',
+                'location': 'Sydney Harbour, Sydney, NSW, Australia',
+                'state': 'New South Wales',
+                'country': 'Australia'
+            },
+            'NSW_TG002': {
+                'type': 'tide_gauge', 
+                'lat': -33.9249, 
+                'lon': 151.2424, 
+                'name': 'Port Botany Industrial Tide Station',
+                'location': 'Botany Bay, Sydney, NSW, Australia',
+                'state': 'New South Wales',
+                'country': 'Australia'
+            },
+            'NSW_WS001': {
+                'type': 'weather_station', 
+                'lat': -33.8765, 
+                'lon': 151.2052, 
+                'name': 'Sydney CBD Weather Observatory',
+                'location': 'Circular Quay, Sydney, NSW, Australia',
+                'state': 'New South Wales',
+                'country': 'Australia'
+            },
+            'NSW_WS002': {
+                'type': 'weather_station', 
+                'lat': -33.8900, 
+                'lon': 151.2500, 
+                'name': 'Bondi Beach Coastal Weather Station',
+                'location': 'Bondi Beach, Eastern Suburbs, Sydney, NSW, Australia',
+                'state': 'New South Wales',
+                'country': 'Australia'
+            },
+            'NSW_WQ001': {
+                'type': 'water_quality', 
+                'lat': -33.8600, 
+                'lon': 151.2000, 
+                'name': 'Sydney Harbour Environmental Monitor',
+                'location': 'Sydney Harbour Bridge, Sydney, NSW, Australia',
+                'state': 'New South Wales',
+                'country': 'Australia'
+            },
+            'NSW_WQ002': {
+                'type': 'water_quality', 
+                'lat': -33.9100, 
+                'lon': 151.2300, 
+                'name': 'Coogee Marine Protected Area Monitor',
+                'location': 'Coogee Beach, Eastern Suburbs, Sydney, NSW, Australia',
+                'state': 'New South Wales',
+                'country': 'Australia'
+            },
         }
         
         # Base values for realistic simulation
@@ -66,6 +114,10 @@ class DataSimulator:
             readings.append({
                 'sensor_id': sensor_id,
                 'sensor_type': sensor_info['type'],
+                'name': sensor_info['name'],
+                'location': sensor_info['location'],
+                'state': sensor_info['state'],
+                'country': sensor_info['country'],
                 'latitude': sensor_info['lat'],
                 'longitude': sensor_info['lon'],
                 'value': round(value, 2),
