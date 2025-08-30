@@ -1,0 +1,66 @@
+Create a professional, vibrant, and interactive coastal hazard monitoring dashboard with the following requirements:
+
+Project Description:
+Coastal areas store vital blue carbon but face threats like storm surges, coastal erosion, pollution, and illegal activities. Build a comprehensive early warning and alerting platform that:
+
+Collects data from physical sensors (tide gauges, weather stations), satellite feeds, and historical records.
+
+Uses AI/ML (Python, TensorFlow, PyTorch) to analyze trends and detect anomalies such as rising sea levels, algal blooms, illegal dumping, or cyclonic activity.
+
+Disseminates actionable alerts via SMS, mobile notifications, and web dashboards.
+
+Target Users: Disaster management departments, coastal city governments, environmental NGOs, fisherfolk, and civil defence teams.
+
+Impact:
+
+Protect human lives and reduce economic losses by enabling timely interventions.
+
+Preserve essential blue carbon habitats.
+
+Support sustainable coastal management and community resilience.
+
+Technical Requirements:
+
+Data ingestion pipelines for real-time and historical data.
+
+AI/ML models to predict anomalies.
+
+Interactive web dashboards using React + D3.js.
+
+Push/SMS notifications for alerts.
+
+Map component showing hazard hotspots, with hoverable tooltips and real-time updates.
+
+Design and Feature Requirements:
+
+Vibrant and professional UI (less cartoonish, more sleek, modern design).
+
+Include multiple tabs for better organization, for example:
+
+Dashboard: Overview of all hazards and trends
+
+Map: Hazard locations with hotspot markers
+
+Alerts: Active alerts, history, and notifications
+
+Analytics: Graphs and charts showing trends, predictions, and AI insights
+
+Keep the “Made by TLE FIGHTERS” text on the bottom right corner intact.
+
+Add hoverable tooltips, animated alert notifications, and color-coded hazard severity.
+
+Bonus Features:
+
+Filtering options by hazard type, severity, or date.
+
+Search functionality for specific coastal areas.
+
+Interactive charts with zoom/pan capability.
+
+Deliverables:
+
+Full working React web app with tabs, map, and dashboard.
+
+Sample data simulation for sensors and satellite feeds.
+
+Integration with AI/ML model for anomaly detection (can be mocked if actual model is not ready).

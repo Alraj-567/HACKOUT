@@ -380,3 +380,121 @@ body {
         color: white;
     }
 }
+
+/* Map and Filter Enhancements */
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.legend-marker {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    display: inline-block;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.legend-marker.sensor-marker.tide {
+    background: var(--ocean-blue);
+}
+
+.legend-marker.sensor-marker.weather {
+    background: var(--sunset-red);
+}
+
+.legend-marker.sensor-marker.quality {
+    background: var(--sea-green);
+}
+
+.legend-marker.hazard-marker.storm {
+    background: var(--storm-purple);
+}
+
+.legend-marker.hazard-marker.pollution {
+    background: var(--coral-orange);
+}
+
+.legend-marker.hazard-marker.erosion {
+    background: var(--sandy-yellow);
+}
+
+.legend-marker.hazard-marker.illegal {
+    background: var(--sunset-red);
+}
+
+/* Insight Cards */
+.insight-card {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid #e2e8f0;
+}
+
+.recommendation-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.recommendation-item:last-child {
+    border-bottom: none;
+}
+
+.recommendation-item i {
+    margin-right: 0.75rem;
+    margin-top: 0.25rem;
+    font-size: 1.125rem;
+}
+
+.recommendation-item div {
+    flex: 1;
+}
+
+.recommendation-item strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: #1e293b;
+}
+
+.recommendation-item .small {
+    color: #64748b;
+    margin: 0;
+}
+
+/* Sensor Network Overview */
+#sensor-network-overview .col {
+    margin-bottom: 1rem;
+}
+
+.sensor-status-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.sensor-status-card:hover {
+    box-shadow: var(--card-shadow);
+    border-color: #cbd5e1;
+}
+
+.sensor-status-card.online {
+    border-left: 4px solid var(--sea-green);
+}
+
+.sensor-status-card.warning {
+    border-left: 4px solid var(--sandy-yellow);
+}
+
+.sensor-status-card.error {
+    border-left: 4px solid var(--sunset-red);
+}

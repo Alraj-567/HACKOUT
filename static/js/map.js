@@ -5,7 +5,12 @@ class HazardMap {
         this.map = null;
         this.sensorMarkers = new Map();
         this.hazardMarkers = new Map();
-        this.markerClusters = null;
+        this.allSensorData = [];
+        this.allHazardData = [];
+        this.filters = {
+            hazardType: '',
+            severity: ''
+        };
         
         this.init();
     }
@@ -77,6 +82,9 @@ class HazardMap {
     }
 
     updateSensorData(sensorData) {
+        // Store all sensor data for filtering
+        this.allSensorData = sensorData;
+        
         // Clear existing sensor markers
         this.sensorLayer.clearLayers();
         this.sensorMarkers.clear();
@@ -166,11 +174,17 @@ class HazardMap {
     }
 
     updateHazardAlerts(alerts) {
+        // Store all hazard data for filtering
+        this.allHazardData = alerts;
+        
+        // Apply current filters
+        const filteredAlerts = this.filterAlerts(alerts);
+        
         // Clear existing hazard markers
         this.hazardLayer.clearLayers();
         this.hazardMarkers.clear();
 
-        alerts.forEach(alert => {
+        filteredAlerts.forEach(alert => {
             const marker = this.createHazardMarker(alert);
             this.hazardMarkers.set(alert.id, marker);
             this.hazardLayer.addLayer(marker);
@@ -302,6 +316,71 @@ class HazardMap {
     // Method to add custom overlay
     addCustomOverlay(name, layer) {
         this.map.addLayer(layer);
+    }
+
+    // Enhanced filtering and search methods
+    applyFilters(filters) {
+        this.filters = { ...this.filters, ...filters };
+        
+        // Re-apply filters to hazard alerts
+        const filteredAlerts = this.filterAlerts(this.allHazardData);
+        
+        // Clear and re-add filtered markers
+        this.hazardLayer.clearLayers();
+        this.hazardMarkers.clear();
+        
+        filteredAlerts.forEach(alert => {
+            const marker = this.createHazardMarker(alert);
+            this.hazardMarkers.set(alert.id, marker);
+            this.hazardLayer.addLayer(marker);
+        });
+    }
+
+    filterAlerts(alerts) {
+        return alerts.filter(alert => {
+            const typeMatch = !this.filters.hazardType || alert.hazard_type === this.filters.hazardType;
+            const severityMatch = !this.filters.severity || alert.severity === this.filters.severity;
+            
+            return typeMatch && severityMatch;
+        });
+    }
+
+    searchLocation(query) {
+        // Simple location search - in a real implementation, this would use geocoding
+        const locationCoords = {
+            'sydney harbour': [-33.8688, 151.2093],
+            'botany bay': [-33.9249, 151.2424],
+            'circular quay': [-33.8765, 151.2052],
+            'bondi beach': [-33.8900, 151.2500],
+            'coogee beach': [-33.9100, 151.2300]
+        };
+
+        const normalizedQuery = query.toLowerCase();
+        const coords = locationCoords[normalizedQuery];
+        
+        if (coords) {
+            this.focusOnLocation(coords[0], coords[1], 14);
+            
+            // Add a temporary marker
+            const searchMarker = L.marker(coords)
+                .bindPopup(`<strong>Search Result:</strong><br>${query}`)
+                .addTo(this.map)
+                .openPopup();
+            
+            // Remove the search marker after 5 seconds
+            setTimeout(() => {
+                this.map.removeLayer(searchMarker);
+            }, 5000);
+        }
+    }
+
+    focusOnAlert(alertId) {
+        const marker = this.hazardMarkers.get(alertId);
+        if (marker) {
+            const latLng = marker.getLatLng();
+            this.map.setView(latLng, 15);
+            marker.openPopup();
+        }
     }
 }
 

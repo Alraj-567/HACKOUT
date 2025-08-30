@@ -22,14 +22,13 @@ def get_sensor_data():
     new_data = data_simulator.generate_sensor_readings()
     
     for reading in new_data:
-        sensor_data = SensorData(
-            sensor_id=reading['sensor_id'],
-            sensor_type=reading['sensor_type'],
-            latitude=reading['latitude'],
-            longitude=reading['longitude'],
-            value=reading['value'],
-            unit=reading['unit']
-        )
+        sensor_data = SensorData()
+        sensor_data.sensor_id = reading['sensor_id']
+        sensor_data.sensor_type = reading['sensor_type']
+        sensor_data.latitude = reading['latitude']
+        sensor_data.longitude = reading['longitude']
+        sensor_data.value = reading['value']
+        sensor_data.unit = reading['unit']
         db.session.add(sensor_data)
     
     db.session.commit()
@@ -57,13 +56,12 @@ def get_hazard_alerts():
     alerts = data_simulator.generate_hazard_alerts()
     
     for alert in alerts:
-        hazard_alert = HazardAlert(
-            hazard_type=alert['hazard_type'],
-            severity=alert['severity'],
-            latitude=alert['latitude'],
-            longitude=alert['longitude'],
-            description=alert['description']
-        )
+        hazard_alert = HazardAlert()
+        hazard_alert.hazard_type = alert['hazard_type']
+        hazard_alert.severity = alert['severity']
+        hazard_alert.latitude = alert['latitude']
+        hazard_alert.longitude = alert['longitude']
+        hazard_alert.description = alert['description']
         db.session.add(hazard_alert)
     
     db.session.commit()
@@ -96,11 +94,10 @@ def get_anomaly_detection():
     for sensor in recent_sensors:
         anomaly_result = anomaly_detector.detect_anomaly(sensor.value, sensor.sensor_type)
         
-        anomaly_detection = AnomalyDetection(
-            sensor_id=sensor.sensor_id,
-            anomaly_score=anomaly_result['score'],
-            is_anomaly=anomaly_result['is_anomaly']
-        )
+        anomaly_detection = AnomalyDetection()
+        anomaly_detection.sensor_id = sensor.sensor_id
+        anomaly_detection.anomaly_score = float(anomaly_result['score'])
+        anomaly_detection.is_anomaly = anomaly_result['is_anomaly']
         db.session.add(anomaly_detection)
         anomalies.append({
             'sensor_id': sensor.sensor_id,

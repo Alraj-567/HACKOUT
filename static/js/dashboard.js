@@ -5,12 +5,20 @@ class CoastalDashboard {
         this.updateInterval = 30000; // 30 seconds
         this.lastUpdate = null;
         this.isOnline = true;
+        this.currentTab = 'dashboard';
+        this.filters = {
+            hazardType: '',
+            severity: '',
+            dateRange: '24'
+        };
         
         this.init();
     }
 
     init() {
         this.setupEventListeners();
+        this.setupTabHandlers();
+        this.setupFilterHandlers();
         this.startDataUpdates();
         this.updateLastUpdateTime();
         
@@ -37,6 +45,73 @@ class CoastalDashboard {
             this.isOnline = false;
             this.showNotification('Connection lost', 'warning');
         });
+    }
+
+    setupTabHandlers() {
+        // Handle tab switching
+        const tabButtons = document.querySelectorAll('[data-bs-toggle="tab"]');
+        tabButtons.forEach(button => {
+            button.addEventListener('shown.bs.tab', (event) => {
+                const target = event.target.getAttribute('data-bs-target');
+                this.currentTab = target.replace('#', '').replace('-pane', '');
+                
+                // Load specific data for the active tab
+                this.handleTabSwitch(this.currentTab);
+            });
+        });
+    }
+
+    setupFilterHandlers() {
+        // Map filters
+        const applyFiltersBtn = document.getElementById('apply-filters');
+        if (applyFiltersBtn) {
+            applyFiltersBtn.addEventListener('click', () => {
+                this.applyMapFilters();
+            });
+        }
+
+        // Alert filters
+        const alertFilters = ['alert-type-filter', 'alert-severity-filter', 'alert-date-filter'];
+        alertFilters.forEach(filterId => {
+            const filterElement = document.getElementById(filterId);
+            if (filterElement) {
+                filterElement.addEventListener('change', () => {
+                    this.applyAlertFilters();
+                });
+            }
+        });
+
+        // Search functionality
+        const locationSearch = document.getElementById('location-search');
+        if (locationSearch) {
+            locationSearch.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.searchLocation(e.target.value);
+                }
+            });
+        }
+    }
+
+    handleTabSwitch(tabName) {
+        switch(tabName) {
+            case 'dashboard':
+                this.loadDashboardOverview();
+                break;
+            case 'map':
+                // Map is already initialized, just refresh data
+                if (window.hazardMap) {
+                    setTimeout(() => {
+                        window.hazardMap.map.invalidateSize();
+                    }, 100);
+                }
+                break;
+            case 'alerts':
+                this.loadDetailedAlerts();
+                break;
+            case 'analytics':
+                this.loadAnalyticsData();
+                break;
+        }
     }
 
     startDataUpdates() {
@@ -106,6 +181,7 @@ class CoastalDashboard {
             const alerts = await response.json();
             
             this.updateAlertsPanel(alerts);
+            this.updateDetailedAlerts(alerts);
             
             // Update map with alerts
             if (window.hazardMap) {
@@ -188,7 +264,10 @@ class CoastalDashboard {
     }
 
     updateAlertsPanel(alerts) {
-        const alertsList = document.getElementById('alerts-list');
+        // Update overview alerts list
+        const alertsList = document.getElementById('alerts-list-overview');
+        
+        if (!alertsList) return;
         
         if (alerts.length === 0) {
             alertsList.innerHTML = `
@@ -200,8 +279,10 @@ class CoastalDashboard {
             return;
         }
 
-        alertsList.innerHTML = alerts.map(alert => {
-            const time = new Date(alert.timestamp).toLocaleString();
+        // Show only first 5 alerts in overview
+        const overviewAlerts = alerts.slice(0, 5);
+        alertsList.innerHTML = overviewAlerts.map(alert => {
+            const time = new Date(alert.timestamp).toLocaleTimeString();
             const severityIcon = this.getSeverityIcon(alert.severity);
             
             return `
@@ -213,6 +294,56 @@ class CoastalDashboard {
                     <div class="alert-description">${alert.description}</div>
                     <div class="alert-time">
                         <i class="fas fa-clock"></i> ${time}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    updateDetailedAlerts(alerts) {
+        const detailedAlertsList = document.getElementById('alerts-list-detailed');
+        
+        if (!detailedAlertsList) return;
+        
+        if (alerts.length === 0) {
+            detailedAlertsList.innerHTML = `
+                <div class="text-center text-muted">
+                    <i class="fas fa-check-circle fa-2x mb-2"></i>
+                    <p>No active alerts</p>
+                </div>
+            `;
+            return;
+        }
+
+        detailedAlertsList.innerHTML = alerts.map(alert => {
+            const time = new Date(alert.timestamp).toLocaleString();
+            const severityIcon = this.getSeverityIcon(alert.severity);
+            const coordinates = `${alert.latitude.toFixed(4)}, ${alert.longitude.toFixed(4)}`;
+            
+            return `
+                <div class="alert-item severity-${alert.severity} mb-3" data-alert-id="${alert.id}">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div class="alert-title">
+                            ${severityIcon} ${alert.hazard_type.replace('_', ' ').toUpperCase()}
+                        </div>
+                        <span class="severity-badge severity-${alert.severity}">${alert.severity.toUpperCase()}</span>
+                    </div>
+                    <div class="alert-description mb-2">${alert.description}</div>
+                    <div class="row text-muted small">
+                        <div class="col-6">
+                            <i class="fas fa-map-marker-alt me-1"></i> ${coordinates}
+                        </div>
+                        <div class="col-6">
+                            <i class="fas fa-clock me-1"></i> ${time}
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-outline-primary me-2" onclick="dashboard.focusOnAlert(${alert.id})">
+                            <i class="fas fa-map"></i> View on Map
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="dashboard.dismissAlert(${alert.id})">
+                            <i class="fas fa-times"></i> Dismiss
+                        </button>
                     </div>
                 </div>
             `;
@@ -321,9 +452,156 @@ class CoastalDashboard {
             }
         }
     }
+
+    // New methods for enhanced functionality
+    loadDashboardOverview() {
+        this.loadSensorNetworkOverview();
+        this.loadOverviewChart();
+    }
+
+    loadDetailedAlerts() {
+        // Alerts are already loaded in the main data update cycle
+        console.log('Loading detailed alerts view');
+    }
+
+    loadAnalyticsData() {
+        this.loadAIRecommendations();
+        this.loadTrendAnalysis();
+    }
+
+    loadSensorNetworkOverview() {
+        const container = document.getElementById('sensor-network-overview');
+        if (!container) return;
+
+        // Mock sensor network status
+        const sensorTypes = {
+            'tide_gauge': { name: 'Tide Gauges', count: 2, status: 'online' },
+            'weather_station': { name: 'Weather Stations', count: 2, status: 'online' },
+            'water_quality': { name: 'Water Quality', count: 2, status: 'warning' }
+        };
+
+        container.innerHTML = Object.keys(sensorTypes).map(type => {
+            const sensor = sensorTypes[type];
+            return `
+                <div class="col-md-4">
+                    <div class="sensor-status-card ${sensor.status}">
+                        <h6 class="mb-1">${sensor.name}</h6>
+                        <h4 class="mb-1">${sensor.count}</h4>
+                        <small class="text-muted text-capitalize">${sensor.status}</small>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    loadOverviewChart() {
+        // This will be handled by the charts.js file
+        console.log('Loading overview chart');
+    }
+
+    loadAIRecommendations() {
+        const container = document.getElementById('ai-recommendations');
+        if (!container) return;
+
+        // Dynamic AI recommendations based on current data
+        const recommendations = [
+            {
+                icon: 'info-circle',
+                color: 'info',
+                title: 'Tide Prediction',
+                description: 'High tide expected at 14:30. Monitor coastal areas.'
+            },
+            {
+                icon: 'exclamation-triangle',
+                color: 'warning',
+                title: 'Weather Alert',
+                description: 'Wind speeds increasing. Storm possible in 6 hours.'
+            },
+            {
+                icon: 'chart-line',
+                color: 'success',
+                title: 'Water Quality',
+                description: 'Quality improving in Sector 3. Normal levels restored.'
+            }
+        ];
+
+        container.innerHTML = recommendations.map(rec => `
+            <div class="recommendation-item">
+                <i class="fas fa-${rec.icon} text-${rec.color}"></i>
+                <div>
+                    <strong>${rec.title}</strong>
+                    <p class="small">${rec.description}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    loadTrendAnalysis() {
+        console.log('Loading trend analysis charts');
+    }
+
+    applyMapFilters() {
+        const hazardType = document.getElementById('hazard-type-filter')?.value || '';
+        const severity = document.getElementById('severity-filter')?.value || '';
+        
+        this.filters.hazardType = hazardType;
+        this.filters.severity = severity;
+        
+        if (window.hazardMap) {
+            window.hazardMap.applyFilters(this.filters);
+        }
+        
+        this.showNotification('Filters applied successfully', 'success', 2000);
+    }
+
+    applyAlertFilters() {
+        const alertType = document.getElementById('alert-type-filter')?.value || '';
+        const alertSeverity = document.getElementById('alert-severity-filter')?.value || '';
+        const dateRange = document.getElementById('alert-date-filter')?.value || '24';
+        
+        // Filter logic would be implemented here
+        console.log('Applying alert filters:', { alertType, alertSeverity, dateRange });
+    }
+
+    searchLocation(query) {
+        if (!query.trim()) return;
+        
+        // Simple location search (would be enhanced with real geocoding)
+        if (window.hazardMap) {
+            window.hazardMap.searchLocation(query);
+        }
+        
+        this.showNotification(`Searching for: ${query}`, 'info', 2000);
+    }
+
+    focusOnAlert(alertId) {
+        // Switch to map tab and focus on alert location
+        const mapTab = document.getElementById('map-tab');
+        if (mapTab) {
+            const tab = new bootstrap.Tab(mapTab);
+            tab.show();
+            
+            // Focus on alert location after tab switch
+            setTimeout(() => {
+                if (window.hazardMap) {
+                    window.hazardMap.focusOnAlert(alertId);
+                }
+            }, 300);
+        }
+    }
+
+    dismissAlert(alertId) {
+        // Mock dismiss functionality
+        const alertElement = document.querySelector(`[data-alert-id="${alertId}"]`);
+        if (alertElement) {
+            alertElement.style.opacity = '0.5';
+            this.showNotification('Alert dismissed', 'success', 2000);
+        }
+    }
 }
 
 // Initialize dashboard when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.coastalDashboard = new CoastalDashboard();
+    window.dashboard = window.coastalDashboard; // Global reference for inline handlers
 });

@@ -34,6 +34,8 @@ class AnomalyDetector:
                 # Water quality index ranges from 0 to 100
                 baseline = np.random.normal(75, 10, 100)
                 baseline = np.clip(baseline, 0, 100)
+            else:
+                baseline = np.random.normal(50, 10, 100)
             
             self.historical_data[sensor_type] = baseline.tolist()
 
@@ -49,8 +51,13 @@ class AnomalyDetector:
                 X_scaled = scaler.fit_transform(X)
                 
                 # Train isolation forest
-                model = IsolationForest(contamination=0.1, random_state=42)
-                model.fit(X_scaled)
+                try:
+                    model = IsolationForest(contamination=0.1, random_state=42)
+                    model.fit(X_scaled)
+                except Exception as e:
+                    print(f"Error training model for {sensor_type}: {e}")
+                    # Use simple threshold detection instead
+                    model = None
                 
                 self.models[sensor_type] = model
                 self.scalers[sensor_type] = scaler
@@ -99,6 +106,7 @@ class AnomalyDetector:
             is_anomaly = value < threshold['min'] or value > threshold['max']
             
             # Calculate simple score based on distance from normal range
+            score = 0.0
             if sensor_type == 'tide_gauge':
                 normal_center = 1.2
                 distance = abs(value - normal_center)

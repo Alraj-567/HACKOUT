@@ -33,6 +33,9 @@ class DataSimulator:
             # Calculate time-based variations
             hours_since_start = (current_time - self.start_time).total_seconds() / 3600
             
+            value = 0
+            unit = 'unknown'
+            
             if sensor_info['type'] == 'tide_gauge':
                 # Simulate tidal patterns (12.42 hour cycle)
                 tidal_factor = math.sin(2 * math.pi * hours_since_start / 12.42)
