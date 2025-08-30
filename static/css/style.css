@@ -1,0 +1,382 @@
+/* Coastal Hazards Monitoring Dashboard - Custom Styles */
+
+:root {
+    --primary-blue: #2c3e50;
+    --ocean-blue: #3498db;
+    --wave-teal: #1abc9c;
+    --coral-orange: #e67e22;
+    --sunset-red: #e74c3c;
+    --sandy-yellow: #f39c12;
+    --sea-green: #27ae60;
+    --storm-purple: #9b59b6;
+    --gradient-ocean: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-sunset: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --gradient-forest: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --gradient-fire: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+body {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navigation Styles */
+.navbar {
+    background: var(--gradient-ocean) !important;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+/* Dashboard Container */
+.dashboard-container {
+    padding: 2rem 1rem;
+}
+
+/* Stats Cards */
+.stats-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+
+.stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.bg-gradient-primary {
+    background: var(--gradient-ocean) !important;
+}
+
+.bg-gradient-warning {
+    background: var(--gradient-fire) !important;
+}
+
+.bg-gradient-danger {
+    background: var(--gradient-sunset) !important;
+}
+
+.bg-gradient-success {
+    background: var(--gradient-forest) !important;
+}
+
+.stats-icon {
+    font-size: 2.5rem;
+    opacity: 0.8;
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.dashboard-card:hover {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.dashboard-card .card-header {
+    border: none;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+}
+
+/* Map Styles */
+#hazard-map {
+    border-radius: 0 0 15px 15px;
+}
+
+.leaflet-popup-content {
+    color: #333;
+    font-weight: 500;
+}
+
+/* Custom Map Markers */
+.hazard-marker {
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    animation: pulse 2s infinite;
+}
+
+.hazard-marker.storm {
+    background-color: var(--storm-purple);
+}
+
+.hazard-marker.pollution {
+    background-color: var(--coral-orange);
+}
+
+.hazard-marker.erosion {
+    background-color: var(--sandy-yellow);
+}
+
+.hazard-marker.illegal_activity {
+    background-color: var(--sunset-red);
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Alert Styles */
+.alert-item {
+    border-radius: 10px;
+    margin-bottom: 0.75rem;
+    border-left: 4px solid;
+    padding: 0.75rem 1rem;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.alert-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.alert-item.severity-low {
+    border-left-color: var(--sea-green);
+}
+
+.alert-item.severity-medium {
+    border-left-color: var(--sandy-yellow);
+}
+
+.alert-item.severity-high {
+    border-left-color: var(--coral-orange);
+}
+
+.alert-item.severity-critical {
+    border-left-color: var(--sunset-red);
+}
+
+.alert-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    text-transform: capitalize;
+}
+
+.alert-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.alert-time {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+/* Chart Container Customization */
+.chart-container {
+    position: relative;
+    height: 250px;
+}
+
+/* Sensor Status Indicators */
+.sensor-status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.sensor-status.online {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.sensor-status.anomaly {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.sensor-status.offline {
+    background-color: #f6f6f6;
+    color: #6c757d;
+}
+
+/* Animated Notifications */
+.alert-notification {
+    animation: slideInRight 0.5s ease-out;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* TLE FIGHTERS Branding */
+.tle-fighters-brand {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--gradient-ocean);
+    color: white;
+    padding: 0.75rem 1.25rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 1000;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    to {
+        box-shadow: 0 4px 25px rgba(116, 185, 255, 0.4);
+    }
+}
+
+/* Table Enhancements */
+.table-responsive {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table th {
+    border: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table td {
+    border: none;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+    padding: 1rem 0.75rem;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(52, 152, 219, 0.05);
+    transform: scale(1.01);
+    transition: all 0.2s ease;
+}
+
+/* Loading Animations */
+.loading-pulse {
+    animation: loadingPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem 0.5rem;
+    }
+    
+    .stats-card .card-body {
+        padding: 1rem;
+    }
+    
+    .stats-icon {
+        font-size: 2rem;
+    }
+    
+    .tle-fighters-brand {
+        bottom: 10px;
+        right: 10px;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Severity Badge Colors */
+.severity-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.severity-low {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.severity-medium {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.severity-high {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.severity-critical {
+    background-color: #f5c6cb;
+    color: #491217;
+    animation: criticalBlink 1s infinite alternate;
+}
+
+@keyframes criticalBlink {
+    from {
+        background-color: #f5c6cb;
+    }
+    to {
+        background-color: #e74c3c;
+        color: white;
+    }
+}
