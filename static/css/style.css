@@ -16,9 +16,10 @@
 }
 
 body {
-    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    background: #f8fafc;
     min-height: 100vh;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #1e293b;
 }
 
 /* Navigation Styles */

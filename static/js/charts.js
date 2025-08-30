@@ -595,6 +595,21 @@ class DashboardCharts {
             this.charts.anomaly.update('none');
         }
     }
+
+    // Fix chart data replacement to prevent growth
+    async updateChartDataSafely(chart, response_promise, dataIndex = 0) {
+        try {
+            const data = await response_promise;
+            if (chart && data && data.datasets && data.datasets[dataIndex]) {
+                // Completely replace the data arrays to prevent growth
+                chart.data.labels = data.labels ? data.labels.slice(-20) : [];
+                chart.data.datasets[dataIndex].data = data.datasets[dataIndex].data ? data.datasets[dataIndex].data.slice(-20) : [];
+                chart.update('none');
+            }
+        } catch (error) {
+            console.error('Error updating chart:', error);
+        }
+    }
 }
 
 // Initialize charts when DOM is loaded

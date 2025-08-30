@@ -457,6 +457,14 @@ class CoastalDashboard {
     loadDashboardOverview() {
         this.loadSensorNetworkOverview();
         this.loadOverviewChart();
+        
+        // Trigger overview chart update
+        if (window.dashboardCharts && window.dashboardCharts.setupOverviewChart) {
+            window.dashboardCharts.setupOverviewChart();
+            setTimeout(() => {
+                window.dashboardCharts.updateOverviewChart();
+            }, 1000);
+        }
     }
 
     loadDetailedAlerts() {
@@ -473,25 +481,60 @@ class CoastalDashboard {
         const container = document.getElementById('sensor-network-overview');
         if (!container) return;
 
-        // Mock sensor network status
-        const sensorTypes = {
-            'tide_gauge': { name: 'Tide Gauges', count: 2, status: 'online' },
-            'weather_station': { name: 'Weather Stations', count: 2, status: 'online' },
-            'water_quality': { name: 'Water Quality', count: 2, status: 'warning' }
-        };
+        // Get real sensor data from the dashboard data
+        fetch('/api/sensor-data')
+            .then(response => response.json())
+            .then(data => {
+                const sensorTypes = {
+                    'tide_gauge': { name: 'Tide Gauges', count: 0, status: 'online' },
+                    'weather_station': { name: 'Weather Stations', count: 0, status: 'online' },
+                    'water_quality': { name: 'Water Quality', count: 0, status: 'online' }
+                };
 
-        container.innerHTML = Object.keys(sensorTypes).map(type => {
-            const sensor = sensorTypes[type];
-            return `
-                <div class="col-md-4">
-                    <div class="sensor-status-card ${sensor.status}">
-                        <h6 class="mb-1">${sensor.name}</h6>
-                        <h4 class="mb-1">${sensor.count}</h4>
-                        <small class="text-muted text-capitalize">${sensor.status}</small>
-                    </div>
-                </div>
-            `;
-        }).join('');
+                // Count sensors by type
+                if (data.data) {
+                    Object.keys(data.data).forEach(type => {
+                        if (sensorTypes[type]) {
+                            sensorTypes[type].count = data.data[type].length;
+                        }
+                    });
+                }
+
+                container.innerHTML = Object.keys(sensorTypes).map(type => {
+                    const sensor = sensorTypes[type];
+                    return `
+                        <div class="col-md-4 mb-3">
+                            <div class="sensor-status-card ${sensor.status}">
+                                <h6 class="mb-1">${sensor.name}</h6>
+                                <h4 class="mb-1">${sensor.count}</h4>
+                                <small class="text-muted text-capitalize">${sensor.status}</small>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            })
+            .catch(error => {
+                console.error('Error loading sensor network overview:', error);
+                // Fallback to mock data
+                const sensorTypes = {
+                    'tide_gauge': { name: 'Tide Gauges', count: 2, status: 'online' },
+                    'weather_station': { name: 'Weather Stations', count: 2, status: 'online' },
+                    'water_quality': { name: 'Water Quality', count: 2, status: 'online' }
+                };
+
+                container.innerHTML = Object.keys(sensorTypes).map(type => {
+                    const sensor = sensorTypes[type];
+                    return `
+                        <div class="col-md-4 mb-3">
+                            <div class="sensor-status-card ${sensor.status}">
+                                <h6 class="mb-1">${sensor.name}</h6>
+                                <h4 class="mb-1">${sensor.count}</h4>
+                                <small class="text-muted text-capitalize">${sensor.status}</small>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            });
     }
 
     loadOverviewChart() {

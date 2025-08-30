@@ -5,7 +5,7 @@ import random
 
 class AnomalyDetector:
     def __init__(self):
-        # Initialize anomaly detection models for different sensor types
+        # Initialize with simple threshold-based detection only
         self.models = {}
         self.scalers = {}
         self.historical_data = {
@@ -13,10 +13,6 @@ class AnomalyDetector:
             'weather_station': [],
             'water_quality': []
         }
-        
-        # Initialize with some baseline data
-        self._initialize_baseline_data()
-        self._train_models()
 
     def _initialize_baseline_data(self):
         """Initialize with baseline historical data for training"""
@@ -64,34 +60,8 @@ class AnomalyDetector:
 
     def detect_anomaly(self, value, sensor_type):
         """Detect if a sensor reading is anomalous"""
-        if sensor_type not in self.models:
-            # If no model exists, use simple threshold-based detection
-            return self._simple_anomaly_detection(value, sensor_type)
-        
-        # Update historical data
-        self.historical_data[sensor_type].append(value)
-        if len(self.historical_data[sensor_type]) > 200:
-            self.historical_data[sensor_type].pop(0)  # Keep last 200 readings
-        
-        # Retrain model periodically
-        if len(self.historical_data[sensor_type]) % 50 == 0:
-            self._train_models()
-        
-        # Scale the input value
-        X = np.array([[value]])
-        X_scaled = self.scalers[sensor_type].transform(X)
-        
-        # Predict anomaly
-        anomaly_score = self.models[sensor_type].decision_function(X_scaled)[0]
-        is_anomaly = self.models[sensor_type].predict(X_scaled)[0] == -1
-        
-        # Convert score to positive value (higher = more anomalous)
-        normalized_score = max(0, -anomaly_score)
-        
-        return {
-            'score': round(normalized_score, 3),
-            'is_anomaly': bool(is_anomaly)
-        }
+        # Always use simple threshold-based detection to avoid ML training issues
+        return self._simple_anomaly_detection(value, sensor_type)
 
     def _simple_anomaly_detection(self, value, sensor_type):
         """Fallback simple threshold-based anomaly detection"""
